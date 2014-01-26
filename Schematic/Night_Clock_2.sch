@@ -4142,37 +4142,37 @@ Type: &lt;b&gt;SPC4077 / SPC 4078&lt;/b&gt;&lt;p&gt;</description>
 <part name="DIS2" library="display-hp" deviceset="HD-H103" device=""/>
 <part name="DIS3" library="display-hp" deviceset="HD-H103" device=""/>
 <part name="DIS4" library="display-hp" deviceset="HD-H103" device=""/>
-<part name="R1" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R2" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R3" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R4" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R5" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R6" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R7" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R8" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R9" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R10" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R11" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R12" library="eagle-ltspice" deviceset="R" device="0207/10"/>
+<part name="R1" library="eagle-ltspice" deviceset="R" device="0207/10" value="470K"/>
+<part name="R2" library="eagle-ltspice" deviceset="R" device="0207/10" value="470K"/>
+<part name="R3" library="eagle-ltspice" deviceset="R" device="0207/10" value="470K"/>
+<part name="R4" library="eagle-ltspice" deviceset="R" device="0207/10" value="470K"/>
+<part name="R5" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
+<part name="R6" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
+<part name="R7" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
+<part name="R8" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
+<part name="R9" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
+<part name="R10" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
+<part name="R11" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
+<part name="R12" library="eagle-ltspice" deviceset="R" device="0207/10" value="220"/>
 <part name="SW1" library="special" deviceset="SW_DIP-1" device=""/>
 <part name="SW2" library="special" deviceset="SW_DIP-1" device=""/>
 <part name="SW3" library="special" deviceset="SW_DIP-1" device=""/>
 <part name="IC2" library="DS1307" deviceset="DS1307" device=""/>
-<part name="R13" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="R14" library="eagle-ltspice" deviceset="R" device="0207/10"/>
-<part name="G1" library="battery" deviceset="B2430UNI" device=""/>
+<part name="R13" library="eagle-ltspice" deviceset="R" device="0207/10" value="2.2K"/>
+<part name="R14" library="eagle-ltspice" deviceset="R" device="0207/10" value="2.2K"/>
+<part name="G1" library="battery" deviceset="B2430UNI" device="" value="CR2032"/>
 <part name="7805" library="v-reg" deviceset="78XXS" device=""/>
 <part name="P+1" library="supply1" deviceset="VCC" device=""/>
 <part name="GND1" library="supply1" deviceset="GND" device=""/>
 <part name="ISP" library="con-lstb" deviceset="MA03-2" device=""/>
-<part name="C1" library="capacitor-wima" deviceset="C" device="2.5/5"/>
+<part name="C1" library="capacitor-wima" deviceset="C" device="2.5/5" value="25 V 2200uF"/>
 <part name="T1" library="transistor" deviceset="2N3904" device=""/>
 <part name="T2" library="transistor" deviceset="2N3904" device=""/>
 <part name="T3" library="transistor" deviceset="2N3904" device=""/>
 <part name="T4" library="transistor" deviceset="2N3904" device=""/>
 <part name="P+2" library="supply1" deviceset="VCC" device=""/>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
-<part name="Q1" library="crystal" deviceset="CRYSTAL" device="TC26V"/>
+<part name="Q1" library="crystal" deviceset="CRYSTAL" device="TC26V" value="32 Khz"/>
 <part name="P+3" library="supply1" deviceset="VCC" device=""/>
 <part name="GND3" library="supply1" deviceset="GND" device=""/>
 <part name="GND4" library="supply1" deviceset="GND" device=""/>
