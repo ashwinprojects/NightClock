@@ -1,25 +1,58 @@
-#include <avr/power.h>
+/**
+The open night clock
+
+INSTRUCTIONS: 
+Upload the sketch. Etch the board. Slap on the parts and have fun.
+
+Copyright (c) 2014 Ashwin Nayak www.ashwinnayak.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+*/
+
 #include "Wire.h"
 #define DS1307_ADDRESS 0x68
-byte zero = 0x00; //workaround for issue #527
+
+// Note all the pins mentioned below are the pins as displayed on the arduino board. The actul atmega pins are different. Refer the excel file for details.
+// Display 1left most display Dipslay 4 is right most display
 
 const byte disp_seg[4][8] = {
 //A   B   C   D   E    F   G   DP
- {10, 9,  7,  8,  13, 11,  6,  12},
- {11, 12, 8,  7,  6,  10,  9,  13}, 
- {10, 9,  7,  8,  13, 11,  6,  12},
- {11, 12,  8, 7,  6,  10,  9,  13} 
+ {10, 9,  7,  8,  13, 11,  6,  12}, // Display 1
+ {11, 12, 8,  7,  6,  10,  9,  13}, // Display 2
+ {10, 9,  7,  8,  13, 11,  6,  12}, // Display 3
+ {11, 12,  8, 7,  6,  10,  9,  13}  // Display 4
 };
 
+
+//Pins that the displays are connected to
 const char disp_1 = 4;
 const char disp_2 = 5;
 const char disp_3 = 2;
 const char disp_4 = 3;
 
-boolean hour24 = false;
-boolean amPmFlag = false;
+boolean hour24 = false; // If true time format will be 24 hour format.
+boolean amPmFlag = false; // If true its PM else its AM for 12 hour format.
 
-boolean AdjustPinValue = false;
+boolean AdjustPinValue = false; // If true the time adjust push button is selected.
+
+boolean currentHourChangePinValue, lastHourChangePinValue, currentMinuteChangePinValue, lastMinuteChangePinValue; // Will be used to debounce the push buttons
 
 int hour;
 
@@ -27,6 +60,7 @@ char a, b, c, d, e, f, g, dp;
 
 void setup(){
 
+  // These pins connect up to the 7 segment led display segments
    pinMode(6, OUTPUT);
    pinMode(7, OUTPUT);
    pinMode(8, OUTPUT);
@@ -36,19 +70,22 @@ void setup(){
    pinMode(12, OUTPUT);
    pinMode(13, OUTPUT);
    
+   // These pins connect up to the 4 transistors
    pinMode(disp_1, OUTPUT);
    pinMode(disp_2, OUTPUT);
    pinMode(disp_3, OUTPUT);
    pinMode(disp_4, OUTPUT);
    
+   // These pins are used for adjusting the time and changing the hour format.
    pinMode(A0, INPUT_PULLUP); //The time adjust pin
    pinMode(A0, OUTPUT);
    pinMode(A1, INPUT_PULLUP); //The Hour Adjust pin
    pinMode(A1, OUTPUT);
-   pinMode(A2, INPUT_PULLUP); //The minute Adjust pin
+   pinMode(A2, INPUT_PULLUP); //The minute Adjust pin. if the adjust in is not selected it will change the time format.
    pinMode(A2, OUTPUT);
 
-  test_all_seg();
+  test_all_seg(); // Test sequence to check if all the sgments in the display are working and to show how multiplexing works.
+  
 }
 
 void loop(){
@@ -71,11 +108,12 @@ void loop(){
     hour = convert24to12(readCurrentHour());
   }
   
-  display_all((hour * 100) +readCurrentMinute());
+  display_all((hour * 100) + readCurrentMinute());
   
 }
 
 void display_all(int number){
+  
  int units, tens, hundreds, thousands;
  units = number % 10;
  tens = (number/10)%10;
@@ -90,6 +128,7 @@ void display_all(int number){
 }
 
 void number_display(int number, int display){
+  
   //Set pins to segmets
   switch(display){
    case 1: 
@@ -161,15 +200,14 @@ void number_display(int number, int display){
      digitalWrite(disp_3, LOW);
      digitalWrite(disp_4, HIGH);
      break;
-  }
-  
+  }  
   
   if(display == 2 || display == 3 || (display == 1 && hour24 == false && amPmFlag == true)){
     blink_seg(dp);
   }
   
   if (display == 1 && hour24 == false && number == 0){
-    
+    // Will be used later for some other processing
   }
   else{
     //Set segments to numbers
@@ -245,9 +283,11 @@ void number_display(int number, int display){
         break;
     }
   }
+  
 }
 
 void set_all_seg_low(){
+  
     digitalWrite(a, LOW); 
     digitalWrite(b, LOW);
     digitalWrite(c, LOW);
@@ -256,18 +296,23 @@ void set_all_seg_low(){
     digitalWrite(f, LOW);
     digitalWrite(g, LOW);
     digitalWrite(dp, LOW);
+    
 }
 
 void blink_seg(char x){
+  
   digitalWrite(x, HIGH);
   delayMicroseconds(100);
   digitalWrite(x, LOW);
+  
 }
 
 void blink_seg_test(char x){
+  
   digitalWrite(x, HIGH);
   delay(100);
   digitalWrite(x, LOW);
+  
 }
 
 void test_all_seg(){
@@ -354,16 +399,19 @@ void test_all_seg(){
    blink_seg_test(f);
    blink_seg_test(g);
    blink_seg_test(dp);
+   
 }
 
-byte decToBcd(byte val){
-// Convert normal decimal numbers to binary coded decimal
-  return ( (val/10*16) + (val%10) );
+byte decToBcd(byte number){
+  
+  return ( (number / 10 * 16) + (number % 10) );
+  
 }
 
-byte bcdToDec(byte val)  {
-// Convert binary coded decimal to normal decimal numbers
-  return ( (val/16*10) + (val%16) );
+byte bcdToDec(byte number)  {
+  
+  return ( (number / 16 * 10) + (number % 16) );
+  
 }
 
 int convert24to12(int number){
@@ -384,20 +432,6 @@ int convert24to12(int number){
   }
   
   return number;
-}
-
-int readCurrentSecond(){
-  
-  int currentSecond;
-  
-  Wire.beginTransmission(DS1307_ADDRESS);
-  Wire.write(0x00);
-  Wire.endTransmission();
-  Wire.requestFrom(DS1307_ADDRESS, 1);
-  
-  currentSecond = bcdToDec(Wire.read());
-  
-  return currentSecond;
   
 }
 
@@ -413,6 +447,7 @@ int readCurrentMinute(){
   return (bcdToDec(Wire.read()));
   
 }
+
 int readCurrentHour(){
   
   //Set the address to be read rom to the Minute Adddress  
@@ -423,6 +458,7 @@ int readCurrentHour(){
   //Read 1 byte from the hour address
   Wire.requestFrom(DS1307_ADDRESS, 1);
   return (bcdToDec(Wire.read() & 0b00111111)); 
+  
 }
 
 //Genric function to perform software debounce
@@ -435,25 +471,28 @@ boolean debounce(boolean last, int button){
   return current;
 }
 
-boolean currentHourChangePinValue, lastHourChangePinValue, currentMinuteChangePinValue, lastMinuteChangePinValue;
-
 void captureHourChange(){
+  
   currentHourChangePinValue = debounce(lastHourChangePinValue, A1);
   if(lastHourChangePinValue == HIGH && currentHourChangePinValue == LOW){ // When the hour change Pin goes from HIGH to LOW increment the hour value
      incrementHour();
   }
   lastHourChangePinValue = currentHourChangePinValue; 
+  
 }
 
 void captureMinuteChange(){
+  
   currentMinuteChangePinValue = debounce(lastMinuteChangePinValue, A2);
   if(lastMinuteChangePinValue == HIGH && currentMinuteChangePinValue == LOW){ // When the miunte change Pin goes from HIGH to LOW increment the minute value
      incrementMinute();
   }
   lastMinuteChangePinValue = currentMinuteChangePinValue; 
+  
 }
 
 void capture12to24HourChange(){
+  
   currentMinuteChangePinValue = debounce(lastMinuteChangePinValue, A2);
   if(lastMinuteChangePinValue == HIGH && currentMinuteChangePinValue == LOW){ // When the miunte change Pin goes from HIGH to LOW flip the 12/24 hour flag
      
@@ -464,7 +503,8 @@ void capture12to24HourChange(){
       hour24 = true;
      }
   }
-  lastMinuteChangePinValue = currentMinuteChangePinValue; 
+  lastMinuteChangePinValue = currentMinuteChangePinValue;
+  
 }
 
 void incrementHour(){
@@ -485,6 +525,7 @@ void incrementHour(){
   Wire.write(0x02);
   Wire.write(decToBcd(currentHour));
   Wire.endTransmission();
+  
 }
 
 void incrementMinute(){
@@ -500,4 +541,5 @@ void incrementMinute(){
   Wire.write(0x00);
   Wire.write(decToBcd(currentMinute));
   Wire.endTransmission();
+  
 }
